@@ -13,3 +13,19 @@ router = APIRouter(
 @router.get("/todos", response_model=list[TodoRead])
 def get_todos(db: Session = Depends(get_db)):
   return TodoService(db).get_todos()
+
+@router.post("/todos", response_model=TodoCreate)
+def create_todo(todo: TodoCreate, db: Session = Depends(get_db)):
+  return TodoService(db).create_todo(todo)
+
+@router.put("/todos/{todo_id}", response_model=TodoRead)
+def update_todo(todo_id: int, todo: TodoRead, db: Session = Depends(get_db)):
+  return TodoService(db).update_todo(todo_id, todo)
+
+@router.put("/todos/{todo_id}/toggle", response_model=TodoRead)
+def toggle_todo(todo_id: int, db: Session = Depends(get_db)):
+  return TodoService(db).toggle_todo(todo_id)
+
+@router.delete("/todos/{todo_id}", response_model=TodoRead)
+def delete_todo(todo_id: int, db: Session = Depends(get_db)):
+  return TodoService(db).delete_todo(todo_id)
