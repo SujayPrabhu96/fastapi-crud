@@ -12,11 +12,13 @@ class TodoService:
     return self.db.query(Todo).all()
 
   def create_todo(self, todo: TodoCreate, background_tasks: BackgroundTasks):
-    self.db.add(todo)
+    new_todo = Todo(**todo.model_dump())
+    self.db.add(new_todo)
     self.db.commit()
-    self.db.refresh(todo)
-    background_tasks.add_task(MailService.send_todo_notification, "sujay@codemancers.com", todo.title, "created")
-    return todo
+    self.db.refresh(new_todo)
+    background_tasks.add_task(MailService.send_todo_notification, "sujay@codemancers.com", new_todo.title, "created")
+
+    return new_todo
 
   def update_todo(self, todo_id: int, todo: TodoRead):
     todo = self.db.query(Todo).filter(Todo.id == todo_id).first()

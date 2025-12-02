@@ -14,8 +14,6 @@ class TodoCreate(BaseModel):
   title: str
   description: Optional[str] = None
   completed: Optional[bool] = False
-  created_at: datetime = datetime.now()
-  updated_at: datetime = datetime.now()
 
   @field_validator('completed')
   def validate_is_completed(cls, v):

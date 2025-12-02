@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, BackgroundTasks
 from sqlalchemy.orm import Session
 
 from app.models.todo import TodoRead, TodoCreate
+from app.db.schema import Todo
 from app.services.todo_service import TodoService
 from app.db.db import get_db
 
@@ -14,7 +15,7 @@ router = APIRouter(
 def get_todos(db: Session = Depends(get_db)):
   return TodoService(db).get_todos()
 
-@router.post("/todos", response_model=TodoCreate)
+@router.post("/todos", response_model=TodoRead)
 def create_todo(todo: TodoCreate, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
   return TodoService(db).create_todo(todo, background_tasks)
 
