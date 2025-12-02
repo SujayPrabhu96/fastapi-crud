@@ -1,7 +1,8 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 from app.db.schema import Todo
 from app.models.todo import TodoRead, TodoCreate
+from app.services.mail_service import MailService
 
 class TodoService:
   def __init__(self, db: Session):
@@ -10,10 +11,11 @@ class TodoService:
   def get_todos(self):
     return self.db.query(Todo).all()
 
-  def create_todo(self, todo: TodoCreate):
+  def create_todo(self, todo: TodoCreate, background_tasks: BackgroundTasks):
     self.db.add(todo)
     self.db.commit()
     self.db.refresh(todo)
+    background_tasks.add_task(MailService.send_todo_notification, "sujay@codemancers.com", todo.title, "created")
     return todo
 
   def update_todo(self, todo_id: int, todo: TodoRead):
